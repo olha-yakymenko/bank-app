@@ -3,4 +3,5 @@ class Konto:
         self.imie=imie
         self.nazwisko=nazwisko
         self.saldo=0
+        self.pesel="12345678910"
         pass

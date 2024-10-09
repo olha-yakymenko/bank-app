@@ -5,7 +5,7 @@ from ..Konto import Konto
 class TestCreateBankAccount(unittest.TestCase):
     imie="Dariusz"
     nazwisko="Januszewski"
-    pesel="12345678910"
+    pesel="06211888888"
 
     def test_tworzenie_konta(self):
         pierwsze_konto = Konto(self.imie, self.nazwisko, self.pesel)
@@ -22,22 +22,23 @@ class TestCreateBankAccount(unittest.TestCase):
         konto=Konto(self.imie, self.nazwisko, dlugi_pesel)
         self.assertEqual(konto.pesel, "Niepoprawny pesel", "Pesel nie zostal zapisany")
 
-    def test_zly_kod_sufix(self):
+    def test_zly_kod_dobry_rok(self):
         konto = Konto(self.imie, self.nazwisko, self.pesel, "Prombkjjgkghgg")
         self.assertEqual(konto.saldo,0, "Kod promocyjny jest zly")
 
-    def test_dobry_kod_sufix(self):
+    def test_dobry_kod_dobry_rok(self):
         konto = Konto(self.imie, self.nazwisko, self.pesel, "PROM_123")
         self.assertEqual(konto.saldo, 50, "Kod promocyjny jest dobry")
 
-    def test_poczatek_kod_sufix(self):
+    def test_zle_kod_dobry_rok(self):
         konto = Konto(self.imie, self.nazwisko, self.pesel, "PROM_876586")
         self.assertEqual(konto.saldo, 0, "Kod promocyjny jest zly")
 
-    def test_rok_zle(self):
-        konto = Konto(self.imie, self.nazwisko, "5905158888")
+    def test_rok_zle_kod_zle(self):
+        konto = Konto(self.imie, self.nazwisko, "5905158888", "PROM_876586")
         self.assertEqual(konto.saldo, 0, "Promocja jest niedostepna dla tego uzytkowanika")
 
-    def test_rok_dobrze(self):
-        konto = Konto(self.imie, self.nazwisko, "6105158888")
-        self.assertEqual(konto.saldo, 50, "Promocja jest dostepna dla tego uzytkowanika")
+    def test_rok_dobrze_kod_zle(self):
+        konto = Konto(self.imie, self.nazwisko, "6105158888", "Prgdgbk")
+        self.assertEqual(konto.saldo, 0, "Promocja jest niedostepna dla tego uzytkowanika")
+    

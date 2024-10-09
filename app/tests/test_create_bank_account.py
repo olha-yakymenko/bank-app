@@ -33,3 +33,11 @@ class TestCreateBankAccount(unittest.TestCase):
     def test_poczatek_kod_sufix(self):
         konto = Konto(self.imie, self.nazwisko, self.pesel, "PROM_876586")
         self.assertEqual(konto.saldo, 0, "Kod promocyjny jest zly")
+
+    def test_rok_zle(self):
+        konto = Konto(self.imie, self.nazwisko, "5905158888")
+        self.assertEqual(konto.saldo, 0, "Promocja jest niedostepna dla tego uzytkowanika")
+
+    def test_rok_dobrze(self):
+        konto = Konto(self.imie, self.nazwisko, "6105158888")
+        self.assertEqual(konto.saldo, 50, "Promocja jest dostepna dla tego uzytkowanika")

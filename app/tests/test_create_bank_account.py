@@ -6,6 +6,8 @@ class TestCreateBankAccount(unittest.TestCase):
     imie="Dariusz"
     nazwisko="Januszewski"
     pesel="06211888888"
+    saldo=1000
+    kod="ujhuh"
 
     def test_tworzenie_konta(self):
         pierwsze_konto = Konto(self.imie, self.nazwisko, self.pesel)
@@ -27,18 +29,42 @@ class TestCreateBankAccount(unittest.TestCase):
         self.assertEqual(konto.saldo,0, "Kod promocyjny jest zly")
 
     def test_dobry_kod_dobry_rok(self):
-        konto = Konto(self.imie, self.nazwisko, self.pesel, "PROM_123")
+        konto = Konto(self.imie, self.nazwisko, self.pesel,  "PROM_123")
         self.assertEqual(konto.saldo, 50, "Kod promocyjny jest dobry")
 
     def test_zle_kod_dobry_rok(self):
-        konto = Konto(self.imie, self.nazwisko, self.pesel, "PROM_876586")
+        konto = Konto(self.imie, self.nazwisko, self.pesel,  "PROM_876586")
         self.assertEqual(konto.saldo, 0, "Kod promocyjny jest zly")
 
     def test_rok_zle_kod_zle(self):
-        konto = Konto(self.imie, self.nazwisko, "5905158888", "PROM_876586")
+        konto = Konto(self.imie, self.nazwisko, "5905158888",  "PROM_876586")
         self.assertEqual(konto.saldo, 0, "Promocja jest niedostepna dla tego uzytkowanika")
 
     def test_rok_dobrze_kod_zle(self):
-        konto = Konto(self.imie, self.nazwisko, "6105158888", "Prgdgbk")
+        konto = Konto(self.imie, self.nazwisko, "6105158888",  "Prgdgbk")
         self.assertEqual(konto.saldo, 0, "Promocja jest niedostepna dla tego uzytkowanika")
-    
+
+class TestCreateBankAccount2(unittest.TestCase):
+    imie = "Dariusz"
+    nazwisko = "Januszewski"
+    pesel = "06211888888"
+    def test_przelew_wychodzacy_dobrze(self):
+        konto =Konto(self.imie, self.nazwisko, self.pesel)
+        konto.saldo = 1000
+        konto.przelew_wychodzacy(100)
+        self.assertEqual(konto.saldo, 900, True)
+    def test_przelew_wychodzacy_zle(self):
+        konto =Konto(self.imie, self.nazwisko, self.pesel)
+        konto.saldo = 50
+        konto.przelew_wychodzacy(100)
+        self.assertEqual(konto.saldo, 50, False)
+    def test_przelew_przychodzacy_dobrze(self):
+        konto =Konto(self.imie, self.nazwisko, self.pesel)
+        konto.saldo = 1000
+        konto.przelew_przychodzacy(100)
+        self.assertEqual(konto.saldo, 1100)
+    def test_przelew_przychodzacy_dobrze(self):
+        konto =Konto(self.imie, self.nazwisko, self.pesel)
+        konto.saldo = 1000
+        konto.przelew_przychodzacy(100)
+        self.assertEqual(konto.saldo, 1100)

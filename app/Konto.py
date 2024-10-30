@@ -3,6 +3,7 @@ class Konto:
         self.imie=imie
         self.nazwisko=nazwisko
         self.saldo=0
+
         if len(pesel)==11:
             self.pesel=pesel
         else:
@@ -11,8 +12,8 @@ class Konto:
             self.saldo=50
         else:
             self.saldo=0
-        
-        
+
+
 
 
     def czy_kod_poprawny(self, kod):
@@ -36,5 +37,14 @@ class Konto:
 
         return year > 1960
 
+    def przelew_wychodzacy(self, kwota):
+        if self.saldo >= kwota:
+            self.saldo -= kwota
+            return True
+        return False
 
-    
+    def przelew_przychodzacy(self, kwota):
+        self.saldo += kwota
+
+
+

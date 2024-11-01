@@ -16,7 +16,7 @@ class TestCreateBankAccount(unittest.TestCase):
         krotki_pesel="123"
         konto=PersonalAccount(self.imie, self.nazwisko, krotki_pesel)
         self.assertEqual(konto.pesel, "Niepoprawny pesel", "Pesel nie zostal zapisany")
-        
+
     def test_za_dlugi_pesel(self):
         dlugi_pesel="123878669696966969"
         konto=PersonalAccount(self.imie, self.nazwisko, dlugi_pesel)
@@ -42,19 +42,19 @@ class TestCreateBankAccount(unittest.TestCase):
         konto = PersonalAccount(self.imie, self.nazwisko, "6105158888",  "Prgdgbk")
         self.assertEqual(konto.saldo, 0, "Promocja jest niedostepna dla tego uzytkowanika")
 
-    def test_szybki_przelew_company_bad(self):
+    def test_szybki_przelew_personal_zle(self):
         konto=PersonalAccount(self.imie, self.nazwisko, self.pesel)
         konto.saldo=110
         konto.szybki_przelew(150)
         self.assertEqual(konto.saldo, 110, "Kwota jest powyzej dostepnej na saldzie")
     
-    def test_szybki_przelew_company_good(self):
+    def test_szybki_przelew_personal_dobrze(self):
         konto=PersonalAccount(self.imie, self.nazwisko, self.pesel)
         konto.saldo=160
         konto.szybki_przelew(150)
         self.assertEqual(konto.saldo, 9, "Kwota jest powyzej dostepnej na saldzie")
 
-    def test_szybki_przelew_company_good2(self):
+    def test_szybki_przelew_personal_ponizej_0(self):
         konto=PersonalAccount(self.imie, self.nazwisko, self.pesel)
         konto.saldo=160
         konto.szybki_przelew(160)

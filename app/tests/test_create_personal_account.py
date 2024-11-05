@@ -52,10 +52,26 @@ class TestCreateBankAccount(unittest.TestCase):
         konto=PersonalAccount(self.imie, self.nazwisko, self.pesel)
         konto.saldo=160
         konto.szybki_przelew(150)
-        self.assertEqual(konto.saldo, 9, "Kwota jest powyzej dostepnej na saldzie")
+        self.assertEqual(konto.saldo, 9, "Przelew zostal wykonany")
 
     def test_szybki_przelew_personal_ponizej_0(self):
         konto=PersonalAccount(self.imie, self.nazwisko, self.pesel)
         konto.saldo=160
         konto.szybki_przelew(160)
-        self.assertEqual(konto.saldo, -1, "Kwota jest powyzej dostepnej na saldzie")
+        self.assertEqual(konto.saldo, -1, "Przelew zostal wykonany")
+
+    def test_kilka_przelewow_dobrze(self):
+        konto=PersonalAccount(self.imie, self.nazwisko, self.pesel)
+        konto.saldo=150
+        konto.szybki_przelew(50)
+        konto.przelew_przychodzacy(10)
+        konto.przelew_wychodzacy(30)
+        self.assertEqual(konto.saldo, 150-50-1+10-30, "Kwota jest ponizej dostepnej na saldzie")
+
+    def test_kilka_przelewow_zle(self):
+        konto=PersonalAccount(self.imie, self.nazwisko, self.pesel)
+        konto.saldo=150
+        konto.szybki_przelew(50)
+        konto.przelew_przychodzacy(10)
+        konto.przelew_wychodzacy(110)
+        self.assertEqual(konto.saldo, 150-50-1+10, "Kwota jest ponizej dostepnej na saldzie")

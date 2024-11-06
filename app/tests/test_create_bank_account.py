@@ -24,3 +24,4 @@ class TestCreateBankAccount2(unittest.TestCase):
         konto.saldo = 1000
         konto.przelew_przychodzacy(100)
         self.assertEqual(konto.saldo, 1100)
+

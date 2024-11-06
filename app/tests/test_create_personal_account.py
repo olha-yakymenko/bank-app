@@ -75,3 +75,9 @@ class TestCreateBankAccount(unittest.TestCase):
         konto.przelew_przychodzacy(10)
         konto.przelew_wychodzacy(110)
         self.assertEqual(konto.saldo, 150-50-1+10, "Kwota jest ponizej dostepnej na saldzie")
+
+    def test_historia_wychodzacy(self):
+        konto = PersonalAccount(self.imie, self.nazwisko, self.pesel)
+        konto.saldo = 1000
+        konto.przelew_wychodzacy(100)
+        self.assertEqual(konto.historia, [-100])

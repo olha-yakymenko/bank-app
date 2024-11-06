@@ -2,15 +2,15 @@ from .Konto import Konto
 class PersonalAccount(Konto):
     express_fee=1
     def __init__(self, imie, nazwisko, pesel, kod=None):
+        super().__init__()
         self.imie=imie
         self.nazwisko=nazwisko
-        self.saldo=0
 
         if len(pesel)==11:
             self.pesel=pesel
         else:
             self.pesel="Niepoprawny pesel"
-        if self.czy_kod_poprawny(kod) and self.czy_po_roku_1960(pesel):
+        if self.czy_po_roku_1960_i_poprawny_kod(pesel, kod):
             self.saldo=50
         else:
             self.saldo=0
@@ -23,19 +23,17 @@ class PersonalAccount(Konto):
         else :
             return False
 
-    def czy_po_roku_1960(self, pesel):
-        year = int(pesel[0:2])
-        month = int(pesel[2:4])
+    def czy_po_roku_1960_i_poprawny_kod(self, pesel, kod):
+        rok_urodzenia = int(pesel[0:2])
+        miesiac = int(pesel[2:4])
 
-        if 1 <= month <= 12:
-            year += 1900
-        elif 21 <= month <= 32:
-            year += 2000
-        elif 81 <= month <= 92:
-            year += 1800
-
-        return year > 1960
-
+        if(rok_urodzenia >=61 and (miesiac >=1 and miesiac <=32 )) or (rok_urodzenia <=24 and (miesiac >=1 and miesiac <=32)):
+            if self.czy_kod_poprawny(kod):
+                return True
+            else:
+                return False
+        else:
+            return False
 
 
 

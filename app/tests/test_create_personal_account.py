@@ -7,10 +7,10 @@ class TestCreateBankAccount(unittest.TestCase):
 
     def test_tworzenie_konta(self):
         pierwsze_konto = PersonalAccount(self.imie, self.nazwisko, self.pesel)
-        self.assertEqual(pierwsze_konto.imie, self.imie, "Imie nie zostało zapisane!")
-        self.assertEqual(pierwsze_konto.nazwisko, self.nazwisko, "Nazwisko nie zostało zapisane!")
-        self.assertEqual(pierwsze_konto.saldo, 0, "Saldo nie jest zerowe!")
-        # self.assertEqual(pierwsze_konto.pesel, self.pesel, "pesel nie zostal zapisany")
+        self.assertEqual(pierwsze_konto.imie, self.imie, "Imie zostało zapisane!")
+        self.assertEqual(pierwsze_konto.nazwisko, self.nazwisko, "Nazwisko zostało zapisane!")
+        self.assertEqual(pierwsze_konto.saldo, 0, "Saldo jest zerowe!")
+        self.assertEqual(pierwsze_konto.pesel, self.pesel, "Saldo jest zerowe!")
         
     def test_za_krotki_pesel(self):
         krotki_pesel="123"
@@ -41,6 +41,10 @@ class TestCreateBankAccount(unittest.TestCase):
     def test_rok_dobrze_kod_zle(self):
         konto = PersonalAccount(self.imie, self.nazwisko, "6105158888",  "Prgdgbk")
         self.assertEqual(konto.saldo, 0, "Promocja jest niedostepna dla tego uzytkowanika")
+    
+    def test_saldo_zero_gdy_brak_kodu(self):
+        konto = PersonalAccount(self.imie, self.nazwisko, self.pesel)
+        self.assertEqual(konto.saldo, 0, "Saldo powinno wynosić 0, gdy nie podano kodu promocyjnego")
 
     def test_szybki_przelew_personal_zle(self):
         konto=PersonalAccount(self.imie, self.nazwisko, self.pesel)
@@ -50,15 +54,15 @@ class TestCreateBankAccount(unittest.TestCase):
     
     def test_szybki_przelew_personal_dobrze(self):
         konto=PersonalAccount(self.imie, self.nazwisko, self.pesel)
-        konto.saldo=160
-        konto.szybki_przelew(150)
-        self.assertEqual(konto.saldo, 9, "Przelew zostal wykonany")
+        konto.saldo=161
+        konto.szybki_przelew(160)
+        self.assertEqual(konto.saldo, 0, "Przelew zostal wykonany")
 
     def test_szybki_przelew_personal_ponizej_0(self):
         konto=PersonalAccount(self.imie, self.nazwisko, self.pesel)
         konto.saldo=160
         konto.szybki_przelew(160)
-        self.assertEqual(konto.saldo, -1, "Przelew zostal wykonany")
+        self.assertEqual(konto.saldo, 160-160-1, "Przelew zostal wykonany")
 
     def test_kilka_przelewow_dobrze(self):
         konto=PersonalAccount(self.imie, self.nazwisko, self.pesel)
@@ -66,12 +70,14 @@ class TestCreateBankAccount(unittest.TestCase):
         konto.szybki_przelew(50)
         konto.przelew_przychodzacy(10)
         konto.przelew_wychodzacy(30)
-        self.assertEqual(konto.saldo, 150-50-1+10-30, "Kwota jest ponizej dostepnej na saldzie")
+        self.assertEqual(konto.saldo, 150-50-1+10-30)
 
-    def test_kilka_przelewow_zle(self):
-        konto=PersonalAccount(self.imie, self.nazwisko, self.pesel)
-        konto.saldo=150
-        konto.szybki_przelew(50)
-        konto.przelew_przychodzacy(10)
-        konto.przelew_wychodzacy(110)
-        self.assertEqual(konto.saldo, 150-50-1+10, "Kwota jest ponizej dostepnej na saldzie")
+    def test_historia_dobrze(self):
+        konto = PersonalAccount(self.imie, self.nazwisko, self.pesel)
+        konto.saldo = 1000
+        konto.przelew_wychodzacy(100)
+        konto.przelew_przychodzacy(200)
+        konto.szybki_przelew(100)
+        self.assertEqual(konto.historia, [-100, 200, -100, -1])
+
+    

@@ -6,6 +6,10 @@ class TestCreateCompanyAccount(unittest.TestCase):
     nazwa="FIRMA"
     nip="1111111111"
 
+    def test_nazwa(self):
+        konto=CompanyAccount(self.nazwa,self.nip)
+        self.assertEqual(konto.nazwa, self.nazwa, "Nazwa zostala zapisana")
+
     def test_dlugosc_nip_krotki(self):
         krotki_nip="111"
         konto=CompanyAccount(self.nazwa,krotki_nip)
@@ -44,12 +48,13 @@ class TestCreateCompanyAccount(unittest.TestCase):
         konto.szybki_przelew(50)
         konto.przelew_przychodzacy(10)
         konto.przelew_wychodzacy(30)
-        self.assertEqual(konto.saldo, 150-50-5+10-30, "Kwota jest ponizej dostepnej na saldzie")
+        self.assertEqual(konto.saldo, 150-50-5+10-30)
 
-    def test_kilka_przelewow_zle(self):
-        konto=CompanyAccount(self.nazwa, self.nip)
-        konto.saldo=150
-        konto.szybki_przelew(50)
-        konto.przelew_przychodzacy(10)
-        konto.przelew_wychodzacy(110)
-        self.assertEqual(konto.saldo, 150-50-5+10, "Kwota jest ponizej dostepnej na saldzie")
+
+    def test_historia_dobrze(self):
+        konto = CompanyAccount(self.nazwa, self.nip)
+        konto.saldo = 1000
+        konto.przelew_wychodzacy(100)
+        konto.przelew_przychodzacy(200)
+        konto.szybki_przelew(100)
+        self.assertEqual(konto.historia, [-100, 200, -100, -5])

@@ -16,6 +16,7 @@ class Konto:
     def szybki_przelew(self,kwota):
         if self.saldo>=kwota:
             self.saldo-=kwota+self.express_fee
-            self.historia.extend(-kwota, -self.express_fee)
+            self.historia.append(-kwota)
+            self.historia.append(-self.express_fee)
         else:
             print("Przelew nie zostal wykonany")

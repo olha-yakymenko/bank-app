@@ -1,152 +1,69 @@
 import unittest
-from ..PersonalAccount import PersonalAccount
 from parameterized import parameterized
+from ..PersonalAccount import PersonalAccount
+
 class TestCreateBankAccount(unittest.TestCase):
-    imie="Dariusz"
-    nazwisko="Januszewski"
-    pesel="06211888888"
+    imie = "Dariusz"
+    nazwisko = "Januszewski"
+    pesel = "06211888888"
 
     def setUp(self):
         self.konto = PersonalAccount(self.imie, self.nazwisko, self.pesel)
 
-    # @parameterized.expand([
-    #     ("imie", "imie", "Dariusz"),
-    #     ("nazwisko", "nazwisko", "Januszewski"),
-    #     ("saldo", "saldo", 0),
-    #     ("pesel", "pesel", "06211888888"),
-    #     ("historia", "historia", []),
-    # ])
-    # def test_tworzenie_konta(self, _, attribute, expected_value):
-    #     self.assertEqual(getattr(self.konto, attribute), expected_value, f"{attribute} jest poprawnie ustawione")
-    #
-    # @parameterized.expand([
-    #     ("za_krotki_pesel", "123", "Niepoprawny pesel"),
-    #     ("za_dlugi_pesel", "123878669696966969", "Niepoprawny pesel"),
-    # ])
-    # def test_pesel_dlugosc(self, _, pesel, expected_value):
-    #     konto = PersonalAccount(self.imie, self.nazwisko, pesel)
-    #     self.assertEqual(konto.pesel, expected_value, "Pesel nie zostal zapisany")
-    #
-    # @parameterized.expand([
-    #     ("zly_kod_dobry_rok", "06211888888", "Prombkjjgkghgg", 0),
-    #     ("dobry_kod_dobry_rok", "06211888888", "PROM_123", 50),
-    #     ("zly_kod_dobry_rok", "06211888888", "PROM_876586", 0),
-    #     ("rok_zle_kod_zle", "5905158888", "PROM_876586", 0),
-    #     ("rok_dobrze_kod_zle", "6105158888", "Prgdgbk", 0),
-    #     ("brak_kodu", "06211888888", None, 0),
-    # ])
-    # def test_kod_promocyjny(self, _, pesel, kod, expected_saldo):
-    #     konto = PersonalAccount(self.imie, self.nazwisko, pesel, kod)
-    #     self.assertEqual(konto.saldo, expected_saldo, "Saldo niezgodne z oczekiwaniem")
-    #
-    # @parameterized.expand([
-    #     ("ponizej_salda", 110, 150, 110),
-    #     ("dokladne_saldo", 161, 160, 0),
-    #     ("ponizej_z_oplata", 160, 160, 160 - 160 - 1),
-    # ])
-    # def test_szybki_przelew(self, _, saldo, kwota_przelewu, expected_saldo):
-    #     self.konto.saldo = saldo
-    #     self.konto.szybki_przelew(kwota_przelewu)
-    #     self.assertEqual(self.konto.saldo, expected_saldo, "Saldo po przelewie niezgodne z oczekiwaniem")
-    #
-    # @parameterized.expand([
-    #     ("kilka_przelewow", 150, [(50, -51), (10, +10), (30, -30)], 150 - 51 + 10 - 30),
-    # ])
-    # def test_kilka_przelewow(self, _, saldo, transactions, expected_saldo):
-    #     self.konto.saldo = saldo
-    #     for kwota, wynik in transactions:
-    #         if wynik < 0:
-    #             self.konto.przelew_wychodzacy(abs(kwota))
-    #         else:
-    #             self.konto.przelew_przychodzacy(kwota)
-    #     self.assertEqual(self.konto.saldo, expected_saldo, "Saldo po kilku przelewach niezgodne z oczekiwaniem")
-    #
-    # @parameterized.expand([
-    #     ("historia_przelewow", 1000, [(-100, -100), (200, 200), (-100, -100), (-1, -1)], [-100, 200, -100, -1]),
-    # ])
-    # def test_historia(self, _, saldo, transactions, expected_historia):
-    #     self.konto.saldo = saldo
-    #     for kwota, wynik in transactions:
-    #         if wynik == -1:
-    #             self.konto.szybki_przelew(abs(kwota))
-    #         elif wynik < 0:
-    #             self.konto.przelew_wychodzacy(abs(kwota))
-    #         else:
-    #             self.konto.przelew_przychodzacy(kwota)
-    #     self.assertEqual(self.konto.historia, expected_historia, "Historia operacji niezgodna z oczekiwaniem")
+    
+    @parameterized.expand([
+        ("test tworzenia konta", "Dariusz", "Januszewski", "06211888888", 0, []),
+    ])
+    def test_tworzenie_konta(self, name, imie, nazwisko, pesel, saldo, historia):
+        konto = PersonalAccount(imie, nazwisko, pesel)  
+        self.assertEqual(konto.imie, imie, f"{name} - imie nie zostało zapisane!")
+        self.assertEqual(konto.nazwisko, nazwisko, f"{name} - nazwisko nie zostało zapisane!")
+        self.assertEqual(konto.saldo, saldo, f"{name} - saldo nie zostało ustawione na 0!")
+        self.assertEqual(konto.pesel, pesel, f"{name} - pesel nie został zapisany!")
+        self.assertEqual(konto.historia, historia, f"{name} - historia transakcji nie jest pusta!")
 
+    @parameterized.expand([
+        ("test za krótki pesel", "123", "Niepoprawny pesel"),
+        ("test za długi pesel", "123878669696966969", "Niepoprawny pesel"),
+    ])
+    def test_pesel(self, name, pesel, expected_result):
+        konto = PersonalAccount(self.imie, self.nazwisko, pesel)
+        self.assertEqual(konto.pesel, expected_result, f"{name} - pesel nie został zapisany")
 
-    def test_tworzenie_konta(self):
-        #pierwsze_konto = PersonalAccount(self.imie, self.nazwisko, self.pesel)
-        self.assertEqual(self.konto.imie, self.imie, "Imie zostało zapisane!")
-        self.assertEqual(self.konto.nazwisko, self.nazwisko, "Nazwisko zostało zapisane!")
-        self.assertEqual(self.konto.saldo, 0, "Saldo jest zerowe!")
-        self.assertEqual(self.konto.pesel, self.pesel)
-        self.assertEqual(self.konto.historia, [])
-        
-    def test_za_krotki_pesel(self):
-        krotki_pesel="123"
-        konto=PersonalAccount(self.imie, self.nazwisko, krotki_pesel)
-        self.assertEqual(konto.pesel, "Niepoprawny pesel", "Pesel nie zostal zapisany")
+    @parameterized.expand([
+        ("test zły kod, dobry rok", "Prombkjjgkghgg", "6105158888", 0),
+        ("test dobry kod, zły rok", "PROM_123", "5905158888", 0),
+        ("test dobry kod, dobry rok", "PROM_123", "6105158888", 50),
+        ("test zły kod i rok", "PROM_876586", "5905158888", 0),
+        ("test brak kodu promocyjnego", None, "6105158888", 0),
+    ])
+    def test_kod_promocyjny(self, name, kod, pesel, expected_saldo):
+        konto = PersonalAccount(self.imie, self.nazwisko, pesel, kod)
+        self.assertEqual(konto.saldo, expected_saldo, f"{name} - niepoprawne saldo")
 
-    def test_za_dlugi_pesel(self):
-        dlugi_pesel="123878669696966969"
-        konto=PersonalAccount(self.imie, self.nazwisko, dlugi_pesel)
-        self.assertEqual(konto.pesel, "Niepoprawny pesel", "Pesel nie zostal zapisany")
+    @parameterized.expand([
+        ("przelew wychodzący - poprawnie", 1000, 100, 900),
+        ("przelew wychodzący - za mało środków", 50, 100, 50),
+    ])
+    def test_przelew_wychodzacy(self, name, saldo_start, przelew_kwota, saldo_end):
+        self.konto.saldo = saldo_start
+        self.konto.przelew_wychodzacy(przelew_kwota)
+        self.assertEqual(self.konto.saldo, saldo_end, f"{name} - saldo niepoprawne po przelewie wychodzącym")
 
-    def test_zly_kod_dobry_rok(self):
-        konto = PersonalAccount(self.imie, self.nazwisko, self.pesel, "Prombkjjgkghgg")
-        self.assertEqual(konto.saldo,0, "Kod promocyjny jest zly")
-
-    def test_dobry_kod_dobry_rok(self):
-        konto = PersonalAccount(self.imie, self.nazwisko, self.pesel,  "PROM_123")
-        self.assertEqual(konto.saldo, 50, "Kod promocyjny jest dobry")
-
-    def test_zle_kod_dobry_rok(self):
-        konto = PersonalAccount(self.imie, self.nazwisko, self.pesel,  "PROM_876586")
-        self.assertEqual(konto.saldo, 0, "Kod promocyjny jest zly")
-
-    def test_rok_zle_kod_zle(self):
-        konto = PersonalAccount(self.imie, self.nazwisko, "5905158888",  "PROM_876586")
-        self.assertEqual(konto.saldo, 0, "Promocja jest niedostepna dla tego uzytkowanika")
-
-    def test_rok_dobrze_kod_zle(self):
-        konto = PersonalAccount(self.imie, self.nazwisko, "6105158888",  "Prgdgbk")
-        self.assertEqual(konto.saldo, 0, "Promocja jest niedostepna dla tego uzytkowanika")
-
-    def test_saldo_zero_gdy_brak_kodu(self):
-        self.assertEqual(self.konto.saldo, 0, "Saldo powinno wynosić 0, gdy nie podano kodu promocyjnego")
-
-    def test_przelew_wychodzacy_dobrze(self):
-        self.konto.saldo = 1000
-        self.konto.przelew_wychodzacy(100)
-        self.assertEqual(self.konto.saldo, 900, True)
-
-    def test_przelew_wychodzacy_zle(self):
-        self.konto.saldo = 50
-        self.konto.przelew_wychodzacy(100)
-        self.assertEqual(self.konto.saldo, 50, False)
-
-    def test_przelew_przychodzacy_dobrze(self):
+    def test_przelew_przychodzacy(self):
         self.konto.saldo = 1000
         self.konto.przelew_przychodzacy(100)
         self.assertEqual(self.konto.saldo, 1100)
 
-
-    def test_szybki_przelew_personal_zle(self):
-        self.konto.saldo=110
-        self.konto.szybki_przelew(150)
-        self.assertEqual(self.konto.saldo, 110, "Kwota jest powyzej dostepnej na saldzie")
-
-    def test_szybki_przelew_personal_dobrze(self):
-        self.konto.saldo=161
-        self.konto.szybki_przelew(160)
-        self.assertEqual(self.konto.saldo, 0, "Przelew zostal wykonany")
-
-    def test_szybki_przelew_personal_ponizej_0(self):
-        self.konto.saldo=160
-        self.konto.szybki_przelew(160)
-        self.assertEqual(self.konto.saldo, 160-160-1, "Przelew zostal wykonany")
+    @parameterized.expand([
+        ("szybki przelew - za mało środków", 110, 150, 110),
+        ("szybki przelew - wystarczająca kwota", 161, 160, 0),
+        ("szybki przelew - saldo poniżej 0", 160, 160, -1),
+    ])
+    def test_szybki_przelew(self, name, saldo_start, przelew_kwota, saldo_end):
+        self.konto.saldo = saldo_start
+        self.konto.szybki_przelew(przelew_kwota)
+        self.assertEqual(self.konto.saldo, saldo_end, f"{name} - saldo niepoprawne po szybkim przelewie")
 
     def test_kilka_przelewow_dobrze(self):
         self.konto.saldo=150
@@ -162,4 +79,5 @@ class TestCreateBankAccount(unittest.TestCase):
         self.konto.szybki_przelew(100)
         self.assertEqual(self.konto.historia, [-100, 200, -100, -1])
 
-    
+
+

@@ -1,5 +1,5 @@
 import unittest
-
+from parameterized import parameterized
 from ..CompanyAccount import CompanyAccount
 
 class TestCreateCompanyAccount(unittest.TestCase):
@@ -10,52 +10,40 @@ class TestCreateCompanyAccount(unittest.TestCase):
         self.konto=CompanyAccount(self.nazwa,self.nip)
 
     def test_nazwa(self):
-        # konto=CompanyAccount(self.nazwa,self.nip)
         self.assertEqual(self.konto.nazwa, self.nazwa, "Nazwa zostala zapisana")
 
-    def test_dlugosc_nip_krotki(self):
-        krotki_nip="111"
-        konto=CompanyAccount(self.nazwa,krotki_nip)
-        self.assertEqual(konto.nip, None, "nip nie zostal zapisany")
+    @parameterized.expand([
+        ("krótki nip", "111", None),
+        ("dłudi nip", "11111111111111111111111111111", None),
+        ("poprawny nip", "1234567890", "1234567890"),  
+    ])
+    def test_dlugosc_nip(self, name, nip_input, expected_nip):
+        konto = CompanyAccount(self.nazwa, nip_input)
+        self.assertEqual(konto.nip, expected_nip, f"{name} - nip nie zostal zapisany")
 
-    def test_dlugosc_nip_dlugi(self):
-        krotki_nip="11111111111111111111111111111"
-        konto=CompanyAccount(self.nazwa,krotki_nip)
-        self.assertEqual(konto.nip, None, "nip nie zostal zapisany")
-
-    def test_dlugosc_nip_dobry(self):
-        self.assertEqual(self.konto.nip, self.nip, "nip zostal zapisany")
-
-    def test_przelew_wychodzacy_dobrze(self):
-        self.konto.saldo = 1000
-        self.konto.przelew_wychodzacy(100)
-        self.assertEqual(self.konto.saldo, 900, True)
-
-    def test_przelew_wychodzacy_zle(self):
-        self.konto.saldo = 50
-        self.konto.przelew_wychodzacy(100)
-        self.assertEqual(self.konto.saldo, 50, False)
+    @parameterized.expand([
+        ("przelew wychodzący - poprawnie", 1000, 100, 900),
+        ("przelew wychodzący - za mało środków", 50, 100, 50),
+    ])
+    def test_przelew_wychodzacy(self, name, saldo_start, przelew_kwota, saldo_end):
+        self.konto.saldo = saldo_start
+        self.konto.przelew_wychodzacy(przelew_kwota)
+        self.assertEqual(self.konto.saldo, saldo_end, f"{name} - saldo niepoprawne po przelewie wychodzącym")
 
     def test_przelew_przychodzacy_dobrze(self):
         self.konto.saldo = 1000
         self.konto.przelew_przychodzacy(100)
         self.assertEqual(self.konto.saldo, 1100)
 
-
-    def test_szybki_przelew_company_zle(self):
-        self.konto.saldo=110
-        self.konto.szybki_przelew(150)
-        self.assertEqual(self.konto.saldo, 110, "Kwota jest powyzej dostepnej na saldzie")
-    
-    def test_szybki_przelew_company_dobrze(self):
-        self.konto.saldo=160
-        self.konto.szybki_przelew(150)
-        self.assertEqual(self.konto.saldo, 5, "Przelew zostal wykonany")
-
-    def test_szybki_przelew_company_ponizej_0(self):
-        self.konto.saldo=160
-        self.konto.szybki_przelew(160)
-        self.assertEqual(self.konto.saldo, -5, "Przelew zostal wykonany")
+    @parameterized.expand([
+        ("szybki przelew - za mało środków", 110, 150, 110),
+        ("szybki przelew - wystarczająca kwota", 160, 150, 5),
+        ("szybki przelew - saldo poniżej 0", 160, 160, -5),
+    ])
+    def test_szybki_przelew(self, name, saldo_start, przelew_kwota, saldo_end):
+        self.konto.saldo = saldo_start
+        self.konto.szybki_przelew(przelew_kwota)
+        self.assertEqual(self.konto.saldo, saldo_end, f"{name} - saldo niepoprawne po szybkim przelewie")
 
     def test_kilka_przelewow_dobrze(self):
         self.konto.saldo=150
@@ -63,7 +51,6 @@ class TestCreateCompanyAccount(unittest.TestCase):
         self.konto.przelew_przychodzacy(10)
         self.konto.przelew_wychodzacy(30)
         self.assertEqual(self.konto.saldo, 150-50-5+10-30)
-
 
     def test_historia_dobrze(self):
         self.konto.saldo = 1000

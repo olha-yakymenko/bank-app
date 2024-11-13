@@ -9,5 +9,9 @@ class CompanyAccount(Konto):
             self.nip = nip
         else:
             self.nip = None
-
     
+    def zaciagnij_kredyt(self, kwota):
+        if self.saldo >= 2 * kwota and 1775 in self.historia :
+            self.saldo += kwota
+        else:
+            print(f"Warunki kredytu nie zostały spełnione. Saldo: {self.saldo}, Kwota kredytu: {kwota}")

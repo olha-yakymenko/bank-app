@@ -34,6 +34,30 @@ class PersonalAccount(Konto):
                 return False
         else:
             return False
+        
 
+    def zaciagnij_kredyt(self, kwota):
+        if self.ostatnie_3_transakcje_wplaty() or self.suma_5_transakcji_wieksza_niz(kwota):
+            self.saldo += kwota
+
+    def ostatnie_3_transakcje_wplaty(self):
+        if len(self.historia) < 3:
+            return False  
+        
+        ostatnie_3 = self.historia[-3:]  
+        for transakcja in ostatnie_3:
+            if transakcja <= 0:
+                return False  
+        return True  
+
+    def suma_5_transakcji_wieksza_niz(self, kwota):
+        if len(self.historia) < 5:
+            return False  
+        
+        ostatnie_5 = self.historia[-5:]  
+        suma_ostatnich_5 = 0
+        for transakcja in ostatnie_5:
+            suma_ostatnich_5 += transakcja  
+        return suma_ostatnich_5 > kwota 
 
 

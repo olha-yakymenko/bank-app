@@ -9,7 +9,7 @@ class TestPersonalKredyt(unittest.TestCase):
 
     def setUp(self):
         self.konto = PersonalAccount(self.imie, self.nazwisko, self.pesel)
-        
+
 
     @parameterized.expand([
         ([-100, 200, -33, 10, 200, 50], 1000, 1000),
@@ -18,9 +18,11 @@ class TestPersonalKredyt(unittest.TestCase):
         ([-100, 200, 500, 100, -1, 300], 10000, 0),
         ([200, 500], 10000, 0),
         ([-666, 200000, 500, -1, 200], 10000, 10000),
+        ([], 1000, 0)
     ])
-    
+
     def test_personal_kredyt(self, historia, kredyt, expected):
         self.konto.historia=historia
         self.konto.zaciagnij_kredyt(kredyt)
         self.assertEqual(self.konto.saldo, expected, "Saldo nie zostalo zwiekszone")
+

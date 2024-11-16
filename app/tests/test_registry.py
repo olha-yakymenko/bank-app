@@ -16,7 +16,7 @@ class TestRegistry(unittest.TestCase):
         cls.konto_77 = PersonalAccount(cls.imie, cls.nazwisko, cls.pesel_77)
 
     def setUp(self):
-        AccountRegistry.registry = []  # Resetowanie rejestru przed każdym testem
+        AccountRegistry.registry = []  
 
     def test_add_account(self):
         AccountRegistry.add_account(self.konto)

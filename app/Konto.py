@@ -14,7 +14,7 @@ class Konto:
         self.historia.append(kwota)
 
     def szybki_przelew(self,kwota):
-        if self.saldo>=kwota:
+        if self.saldo>=kwota and kwota>0:
             self.saldo-=kwota+self.express_fee
             self.historia.append(-kwota)
             self.historia.append(-self.express_fee)

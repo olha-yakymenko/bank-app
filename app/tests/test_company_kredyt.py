@@ -15,6 +15,7 @@ class TestCompanyKredyt(unittest.TestCase):
         ([-100, 200, -33, 10, 200], 5000, 1000, 5000), 
         ([-100, 200, -33, 10, 200, 1775], 2000, 1000, 3000),  
         ([-100, 200, -33, 10, 200, 1775], 5000, 10000, 5000),
+        ([], 1000, 200, 1000)
     ])
     
     def test_personal_kredyt(self, historia, saldo, kredyt, expected):

@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify
 from .AccountRegistry import AccountRegistry
 from .PersonalAccount import PersonalAccount
@@ -18,6 +17,10 @@ def get_account_by_pesel(pesel):
     if account is None:
         return jsonify({"message": "konta brak"}), 404
     return jsonify({"imie": account.imie, "nazwisko": account.nazwisko, "saldo": account.saldo}), 200
+
+@app.route("/api/accounts/count", methods=['GET'])
+def how_many_accounts():
+    return f"Ilość kont w rejestrze {AccountRegistry.get_accounts_count()}", 200
 
 
 @app.route("/api/accounts/<pesel>", methods=['PATCH'])
@@ -39,5 +42,5 @@ def delete_account(pesel):
     account = AccountRegistry.search_by_pesel(pesel)
     if account is None:
         return jsonify({"message": "konta brak"}), 404
-    AccountRegistry.registry.remove(account)
-    return jsonify({"message": "Account deleted"}), 200
+    AccountRegistry.delete_by_pesel(pesel)
+    return jsonify("konto usuniete"), 200

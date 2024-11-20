@@ -39,3 +39,8 @@ class TestRegistry(unittest.TestCase):
         AccountRegistry.add_account(self.konto_66)
         result = AccountRegistry.search_by_pesel(self.konto_77)
         self.assertIsNone(result, "Pesel nie jest znaleziony")
+
+    def test_delete_account(self):
+        AccountRegistry.add_account(self.konto)
+        result=AccountRegistry.delete_by_pesel(self.pesel)
+        self.assertIsNone(result, "Pesel nie jest znaleziony")

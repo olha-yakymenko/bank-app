@@ -14,3 +14,8 @@ class AccountRegistry:
                   if i.pesel==pesel:
                     return i
             return None
+        @classmethod
+        def delete_by_pesel(cls, pesel):
+            for konto in cls.registry:
+                if konto.pesel == pesel:
+                    cls.registry.remove(konto)

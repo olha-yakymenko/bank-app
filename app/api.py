@@ -5,6 +5,8 @@ app = Flask(__name__)
 @app.route("/api/accounts", methods=['POST'])
 def create_account():
     data = request.get_json()
+    if not data or "imie" not in data or "nazwisko" not in data or "pesel" not in data:
+        return jsonify({"error": "Missing required fields"}), 400
     print(f"Create account request: {data}")
     konto = PersonalAccount(data["imie"], data["nazwisko"], data["pesel"])
     AccountRegistry.add_account(konto)
@@ -44,3 +46,4 @@ def delete_account(pesel):
         return jsonify({"message": "konta brak"}), 404
     AccountRegistry.delete_by_pesel(pesel)
     return jsonify("konto usuniete"), 200
+

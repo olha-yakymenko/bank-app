@@ -16,20 +16,25 @@ class TestCRUD(unittest.TestCase):
     def test_create_account(self):
         response=requests.post(self.base_url, json=self.body)
         self.assertEqual(response.status_code, 201, "Niepoprawny status")
-        
+
+    def test_create_account_empty(self):
+        response = requests.post(self.base_url, json={})
+        self.assertEqual(response.status_code, 400, "Dane nie zostały podane")
+
+
     def test_how_many_accounts(self):
         response = requests.get(self.base_url+"/count")
         self.assertEqual(response.status_code, 200)
 
     def test_get_account_ok(self):
-            pesel = self.body["pesel"]
-            requests.post(self.base_url, json=self.body)
-            response = requests.get(f"{self.base_url}/{pesel}")
-            self.assertEqual(response.status_code, 200, "Niepoprawny status")
-            data = response.json()
-            self.assertEqual(data["imie"], self.body["imie"], "Niepoprawne imię")
-            self.assertEqual(data["nazwisko"], self.body["nazwisko"], "Niepoprawne nazwisko")
-            self.assertEqual(data["saldo"], 0, "Niepoprawne saldo początkowe")
+        pesel = self.body["pesel"]
+        requests.post(self.base_url, json=self.body)
+        response = requests.get(f"{self.base_url}/{pesel}")
+        self.assertEqual(response.status_code, 200, "Niepoprawny status")
+        data = response.json()
+        self.assertEqual(data["imie"], self.body["imie"], "Niepoprawne imię")
+        self.assertEqual(data["nazwisko"], self.body["nazwisko"], "Niepoprawne nazwisko")
+        self.assertEqual(data["saldo"], 0, "Niepoprawne saldo początkowe")
 
     def test_get_account_bad(self):
         response = requests.get(f"{self.base_url}/28747547575")
@@ -56,7 +61,7 @@ class TestCRUD(unittest.TestCase):
         updated_body = {
             "imie": "NoweImie",
             "nazwisko": "NoweNazwisko",
-            "pesel": 8888888888888,
+            "pesel": "8888888888888",
             "saldo": 500
         }
         response = requests.patch(f"{self.base_url}/74892000000", json=updated_body)
@@ -67,10 +72,35 @@ class TestCRUD(unittest.TestCase):
         requests.post(self.base_url, json=self.body)
         response = requests.delete(f"{self.base_url}/{pesel}")
         self.assertEqual(response.status_code, 200, "Niepoprawny status usunięcia")
-        
-    def test_delete_unreal_account(self):
+        response2 = requests.get(f"{self.base_url}/{pesel}")
+        self.assertEqual(response2.status_code, 404, "Niepoprawny status usunięcia")
+
+    def test_delete_non_exiting_account(self):
         response = requests.delete(f"{self.base_url}/74892000000")
         self.assertEqual(response.status_code, 404, "Niepoprawny status usunięcia")
+
+
+    def test_get_account_after_update(self):
+        pesel = self.body["pesel"]
+        requests.post(self.base_url, json=self.body)
+        updated_body = {
+            "imie": "NoweImie",
+            "nazwisko": "NoweNazwisko",
+            "pesel": pesel,
+            "saldo": 500
+        }
+        requests.patch(f"{self.base_url}/{pesel}", json=updated_body)
+        response = requests.get(f"{self.base_url}/{pesel}")
+        data = response.json()
+        self.assertEqual(data["imie"], "NoweImie", "Imię nie zostało zaktualizowane")
+        self.assertEqual(data["nazwisko"], "NoweNazwisko", "Nazwisko nie zostało zaktualizowane")
+        self.assertEqual(data["saldo"], 500, "Saldo nie zostało zaktualizowane")
+
+    def tearDown(self):
+        pesel = self.body.get("pesel")
+        if pesel:
+            requests.delete(f"{self.base_url}/{pesel}")
+
 
 
      

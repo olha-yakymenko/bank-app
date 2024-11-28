@@ -71,7 +71,7 @@ class TestCRUD(unittest.TestCase):
         pesel = self.body["pesel"]
         requests.post(self.base_url, json=self.body)
         response = requests.delete(f"{self.base_url}/{pesel}")
-        self.assertEqual(response.status_code, 200, "Niepoprawny status usunięcia")
+        self.assertEqual(response.status_code, 201, "Niepoprawny status usunięcia")
         response2 = requests.get(f"{self.base_url}/{pesel}")
         self.assertEqual(response2.status_code, 404, "Niepoprawny status usunięcia")
 
@@ -96,11 +96,14 @@ class TestCRUD(unittest.TestCase):
         self.assertEqual(data["nazwisko"], "NoweNazwisko", "Nazwisko nie zostało zaktualizowane")
         self.assertEqual(data["saldo"], 500, "Saldo nie zostało zaktualizowane")
 
+    
+    def test_not_uniq_pesel(self):
+        response=requests.post(self.base_url, json=self.body)
+        self.assertEqual(response.status_code, 201, "Niepoprawny status")
+        response2=requests.post(self.base_url, json=self.body)
+        self.assertEqual(response2.status_code, 409, "Niepoprawny status")
+
     def tearDown(self):
         pesel = self.body.get("pesel")
         if pesel:
             requests.delete(f"{self.base_url}/{pesel}")
-
-
-
-     

@@ -18,5 +18,7 @@ class Konto:
             self.saldo-=kwota+self.express_fee
             self.historia.append(-kwota)
             self.historia.append(-self.express_fee)
+            return True
         else:
             print("Przelew nie zostal wykonany")
+            return False

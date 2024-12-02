@@ -27,6 +27,9 @@ def transfers(pesel):
     if "type" not in data or "amount" not in data:
         return jsonify({"message": "Brakuje typu lub kwoty"}), 400
 
+    if data["amount"] <= 0:
+        return jsonify({"message": "Kwota jest ujemna"}), 400
+    
     if data["type"] == "outgoing":
         wynik = account.przelew_wychodzacy(data["amount"])  
         if not wynik:

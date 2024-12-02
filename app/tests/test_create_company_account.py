@@ -21,3 +21,6 @@ class TestCreateCompanyAccount(unittest.TestCase):
         konto = CompanyAccount(self.nazwa, nip_input)
         self.assertEqual(konto.nip, expected_nip, f"{name} - nip nie zostal zapisany")
 
+    def test_initial_balance(self):
+        self.assertEqual(self.konto.saldo, 0, "Początkowe saldo wynosi 0")
+

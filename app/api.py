@@ -7,10 +7,44 @@ def create_account():
     data = request.get_json()
     if not data or "imie" not in data or "nazwisko" not in data or "pesel" not in data:
         return jsonify({"error": "Missing required fields"}), 400
-    print(f"Create account request: {data}")
-    konto = PersonalAccount(data["imie"], data["nazwisko"], data["pesel"])
-    AccountRegistry.add_account(konto)
-    return jsonify({"message": "Account created"}), 201
+    used=AccountRegistry.search_by_pesel(data["pesel"])
+    if used == None:
+        print(f"Create account request: {data}")
+        account = PersonalAccount(data["imie"], data["nazwisko"], data["pesel"])
+        AccountRegistry.add_account(account)
+        return jsonify({"message": "Account created"}), 201
+    else:
+        return jsonify({"message": "This pesel was used"}), 409
+
+@app.route("/api/accounts/<pesel>/transfer", methods=['POST'])
+def transfers(pesel):
+    account = AccountRegistry.search_by_pesel(pesel)
+    if account is None:
+        return jsonify({"message": "Konto nie zostało znalezione"}), 404
+    
+    data = request.get_json()
+    
+    if "type" not in data or "amount" not in data:
+        return jsonify({"message": "Brakuje typu lub kwoty"}), 400
+
+    if data["amount"] <= 0:
+        return jsonify({"message": "Kwota jest ujemna"}), 400
+    
+    if data["type"] == "outgoing":
+        wynik = account.przelew_wychodzacy(data["amount"])  
+        if not wynik:
+            return jsonify({"message": "Za mała kwota"}), 409
+    elif data["type"] == "incoming":
+        account.przelew_przychodzacy(data["amount"])  
+    elif data["type"] == "express":
+        wynik = account.szybki_przelew(data["amount"])
+        if not wynik:
+            return jsonify({"message": "Za mała kwota"}), 409
+    else:
+        return jsonify({"message": "Nieznany typ przelewu"}), 400
+    
+    return jsonify({"message": "Zlecenie przyjęto do realizacji"}), 200
+
 
 
 @app.route("/api/accounts/<pesel>", methods=['GET'])
@@ -22,7 +56,8 @@ def get_account_by_pesel(pesel):
 
 @app.route("/api/accounts/count", methods=['GET'])
 def how_many_accounts():
-    return f"Ilość kont w rejestrze {AccountRegistry.get_accounts_count()}", 200
+    result=AccountRegistry.get_accounts_count()
+    return jsonify({"Ilosc kont": result}), 200
 
 
 @app.route("/api/accounts/<pesel>", methods=['PATCH'])
@@ -45,5 +80,4 @@ def delete_account(pesel):
     if account is None:
         return jsonify({"message": "konta brak"}), 404
     AccountRegistry.delete_by_pesel(pesel)
-    return jsonify("konto usuniete"), 200
-
+    return jsonify("Konto usuniete"), 201

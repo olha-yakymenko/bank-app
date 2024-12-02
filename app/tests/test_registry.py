@@ -1,46 +1,73 @@
+
+
 import unittest
+from parameterized import parameterized
+
 from ..PersonalAccount import PersonalAccount
 from ..AccountRegistry import AccountRegistry
+imie = "Dariusz"
+nazwisko = "Januszewski"
+pesel = "06211888888"
+pesel_66 = "89394029495"
+pesel_77 = "893940739495"
+konto = PersonalAccount(imie, nazwisko, pesel)
+
 
 class TestRegistry(unittest.TestCase):
     imie = "Dariusz"
     nazwisko = "Januszewski"
     pesel = "06211888888"
-    pesel_66 = "89394029495"
-    pesel_77 = "893940739495"
-
-    @classmethod
-    def setUpClass(cls):
-        cls.konto = PersonalAccount(cls.imie, cls.nazwisko, cls.pesel)
-        cls.konto_66 = PersonalAccount(cls.imie, cls.nazwisko, cls.pesel_66)
-        cls.konto_77 = PersonalAccount(cls.imie, cls.nazwisko, cls.pesel_77)
+    pesel_1 = "89394029495"
+    pesel_2 = "893940739495"
+    konto = PersonalAccount(imie, nazwisko, pesel)
+    konto1 = PersonalAccount(imie, nazwisko, pesel_1)
+    konto2 = PersonalAccount(imie, nazwisko, pesel_2)
 
     def setUp(self):
         AccountRegistry.registry = []  
 
-    def test_add_account(self):
-        AccountRegistry.add_account(self.konto)
-        self.assertEqual(AccountRegistry.get_accounts_count(), 1, "Niepoprawna liczba kont w rejestrze")
+    @parameterized.expand([
+        ("single_account", [konto], 1),
+        ("multiple_accounts", [
+            konto1,
+            konto2
+        ], 2),
+    ])
+    def test_add_accounts(self, name, accounts_to_add, expected_count):
+        for account in accounts_to_add:
+            AccountRegistry.add_account(account)
+        self.assertEqual(AccountRegistry.get_accounts_count(), expected_count, f"Niepoprawna liczba kont: {name}")
 
-    def test_add_multiple_accounts(self):
-        AccountRegistry.add_account(self.konto_66)
-        AccountRegistry.add_account(self.konto_77)
-        self.assertEqual(AccountRegistry.get_accounts_count(), 2, "Niepoprawna liczba kont w rejestrze")
 
-    def test_search_by_pesel(self):
-        AccountRegistry.add_account(self.konto)
-        AccountRegistry.add_account(self.konto_66)
-        AccountRegistry.add_account(self.konto_77)
-        result = AccountRegistry.search_by_pesel(self.pesel)
-        self.assertEqual(result, self.konto, "Niepoprawne konto znalezione po PESEL!")
 
-    def test_search_by_invalid_pesel(self):
-        AccountRegistry.add_account(self.konto)
-        AccountRegistry.add_account(self.konto_66)
-        result = AccountRegistry.search_by_pesel(self.konto_77)
-        self.assertIsNone(result, "Pesel nie jest znaleziony")
+    @parameterized.expand([
+        ("single_account", [konto], "06211888888", konto),
+        ("multiple_accounts", [
+            konto1,
+            konto2
+        ], "89394029495", konto1),
+        ("nonexistent_account", [
+            konto1, konto2
+        ], "43546478489", None),
+    ])
+    def test_search_by_pesel(self, name, accounts_to_add, searching_pesel, expected_account):
+        for account in accounts_to_add:
+            AccountRegistry.add_account(account)
+        found_account = AccountRegistry.search_by_pesel(searching_pesel)
+        if expected_account is None:
+            self.assertEqual(found_account, None, f"Niepoprawny wynik wyszukiwania: {name}")
+        else:
+            self.assertEqual(found_account.imie, expected_account.imie, f"Niepoprawne imie: {name}")
+            self.assertEqual(found_account.nazwisko, expected_account.nazwisko, f"Niepoprawne nazwisko: {name}")
+            self.assertEqual(found_account.pesel, expected_account.pesel, f"Niepoprawny pesel: {name}")
 
-    def test_delete_account(self):
-        AccountRegistry.add_account(self.konto)
-        result=AccountRegistry.delete_by_pesel(self.pesel)
-        self.assertIsNone(result, "Pesel nie jest znaleziony")
+    @parameterized.expand([
+        ("delete_existing_account", [konto], "06211888888"),
+       ("delete_nonexistent_account", [konto], "43546478489"),
+    ])
+    def test_delete_account(self, name, accounts_to_add, deleting_pesel):
+        for account in accounts_to_add:
+            AccountRegistry.add_account(account)
+        result1 = AccountRegistry.delete_by_pesel(deleting_pesel)
+        result2=AccountRegistry.search_by_pesel(deleting_pesel)
+        self.assertEqual(result1, result2, f"Pesel nie jest znaleziony: {name}")

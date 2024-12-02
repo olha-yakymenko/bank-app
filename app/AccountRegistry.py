@@ -19,3 +19,4 @@ class AccountRegistry:
             for konto in cls.registry:
                 if konto.pesel == pesel:
                     cls.registry.remove(konto)
+            return None

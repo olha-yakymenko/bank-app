@@ -1,13 +1,16 @@
 import unittest
 from parameterized import parameterized
 from ..CompanyAccount import CompanyAccount
+from unittest.mock import patch
 
 class TestCompanyKredyt(unittest.TestCase):
     nazwa="Nazwa"
-    nip="11111111111"
+    nip="8461627563"
 
-    def setUp(self):
-        self.konto = CompanyAccount( self.nazwa, self.nip)
+    @patch('app.CompanyAccount.CompanyAccount.is_nip_valid')
+    def setUp(self, mock_is_nip_valid):
+        mock_is_nip_valid.return_value = True
+        self.konto = CompanyAccount(self.nazwa, self.nip)
 
     @parameterized.expand([
         ([-100, 200, -33, 10, 200, 50], 777, 1000, 777),

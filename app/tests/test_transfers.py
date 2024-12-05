@@ -1,5 +1,6 @@
 import unittest
 from parameterized import parameterized
+from unittest.mock import patch
 
 from ..PersonalAccount import PersonalAccount
 from ..CompanyAccount import CompanyAccount
@@ -55,11 +56,13 @@ class TestTransferPersonal(unittest.TestCase):
 
 class TestTransferCompany(unittest.TestCase):
     nazwa="FIRMA"
-    nip="1111111111"
+    nip="8461627563"
 
-    def setUp(self):
-        self.konto=CompanyAccount(self.nazwa,self.nip)
-    
+    @patch('app.CompanyAccount.CompanyAccount.is_nip_valid')
+    def setUp(self, mock_is_nip_valid):
+        mock_is_nip_valid.return_value = True
+        self.konto = CompanyAccount(self.nazwa, self.nip)
+
     @parameterized.expand([
         ("przelew wychodzący - poprawnie", 1000, 100, 900),
         ("przelew wychodzący - za mało środków", 50, 100, 50),

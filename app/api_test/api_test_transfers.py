@@ -94,16 +94,13 @@ class TestAccountTransfers(unittest.TestCase):
         }
         self.base_url = "http://127.0.0.1:5000/api/accounts"
         
-        # Create account
         response = requests.post(self.base_url, json=self.body)
         self.assertEqual(response.status_code, 201, f"Failed to create account: {response.text}")
 
-        # Add initial balance
         response = requests.post(self.base_url + "/" + self.body["pesel"] + "/transfer", json={"amount": 1000, "type": "incoming"})
         self.assertEqual(response.status_code, 200, f"Failed to add initial balance: {response.text}")
     
     def tearDown(self) -> None:
-        # Delete account
         response = requests.delete(f"{self.base_url}/{self.body['pesel']}")
         self.assertEqual(response.status_code, 201, f"Failed to delete account: {response.text}")
 
@@ -111,9 +108,9 @@ class TestAccountTransfers(unittest.TestCase):
         ("test_incoming_transfer_account_exists", "06211888838", 500, "incoming", 200),
         ("test_incoming_transfer_account_doesnt_exist", "1111111111111", 500, "incoming", 404),
         ("test_outgoing_transfer", "06211888838", 100, "outgoing", 200),
-        ("test_failed_outgoing_transfer", "06211888838", 1200, "outgoing", 409),  # Exceeds balance
+        ("test_failed_outgoing_transfer", "06211888838", 1200, "outgoing", 409), 
         ("test_express_transfer_successful", "06211888838", 500, "express", 200),
-        ("test_failed_express_transfer", "06211888838", 1200, "express", 409),  # Exceeds balance
+        ("test_failed_express_transfer", "06211888838", 1200, "express", 409), 
         ("test_missing_type", "06211888838", None, None, 400),
         ("test_unknown_transfer_type", "06211888838", 500, "unknown", 400),
         ("test_missing_amount", "06211888838", None, "incoming", 400),

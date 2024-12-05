@@ -4,11 +4,6 @@ import requests
 import datetime
 
 
-from .Konto import Konto
-import requests
-from datetime import date
-import os
-
 class CompanyAccount(Konto):
     express_fee=5
 

@@ -1,12 +1,12 @@
 import os
 from .Konto import Konto
 import requests
-import datetime
+from datetime import datetime
 
 
 class CompanyAccount(Konto):
     express_fee=5
-
+    email_text="Historia konta Twojej firmy to: "
     def __init__(self,nazwa,nip):
         super().__init__()
         self.nazwa=nazwa
@@ -20,7 +20,7 @@ class CompanyAccount(Konto):
     @classmethod
     def is_nip_valid(cls, nip):
         gov_url = os.getenv('BANK_APP_MF_URL', 'https://wl-test.mf.gov.pl/')
-        today = datetime.datetime.today().strftime('%Y-%m-%d')
+        today = datetime.today().strftime('%Y-%m-%d')
         nip_path = f"{gov_url}api/search/nip/{nip}/?date={today}"
         print(f"Wysylanie zapytania do {nip_path}")
         response = requests.get(nip_path)

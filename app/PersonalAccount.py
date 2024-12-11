@@ -1,9 +1,10 @@
 from .Konto import Konto
-
+from datetime import datetime
+from app.SMTPClient import SMTPClient
 
 class PersonalAccount(Konto):
     express_fee = 1
-
+    email_text="Twoja historia konta to: "
     def __init__(self, imie, nazwisko, pesel, kod=None):
         super().__init__()
         self.imie = imie
@@ -55,5 +56,5 @@ class PersonalAccount(Konto):
             return False
         return sum(self.historia[-5:])>kwota
     
-
+    
 

@@ -100,7 +100,7 @@ class TestAccountTransfers(unittest.TestCase):
         response = requests.post(self.base_url + "/" + self.body["pesel"] + "/transfer", json={"amount": 1000, "type": "incoming"})
         self.assertEqual(response.status_code, 200, f"Failed to add initial balance: {response.text}")
     
-    def tearDown(self) -> None:
+    def tearDown(self):
         response = requests.delete(f"{self.base_url}/{self.body['pesel']}")
         self.assertEqual(response.status_code, 201, f"Failed to delete account: {response.text}")
 

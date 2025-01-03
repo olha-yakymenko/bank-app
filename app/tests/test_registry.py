@@ -71,3 +71,79 @@ class TestRegistry(unittest.TestCase):
         result1 = AccountRegistry.delete_by_pesel(deleting_pesel)
         result2=AccountRegistry.search_by_pesel(deleting_pesel)
         self.assertEqual(result1, result2, f"Pesel nie jest znaleziony: {name}")
+
+
+
+
+import unittest
+from unittest.mock import mock_open, patch
+import json
+class TestRegisterOfAccountsWithJSON(unittest.TestCase):
+
+    def setUp(self):
+        self.konto1 = PersonalAccount(imie="Jan", nazwisko="Kowalski", pesel="12345678901")
+        self.konto1.saldo = 100
+        self.konto1.historia = ["Wpłata 100 PLN"]
+
+        self.konto2 = PersonalAccount(imie="Anna", nazwisko="Nowak", pesel="98765432101")
+        self.konto2.saldo = 50
+        self.konto2.historia = ["Wpłata 50 PLN"]
+
+        AccountRegistry.add_account(self.konto1)
+        AccountRegistry.add_account(self.konto2)
+
+    def tearDown(self):
+        AccountRegistry.registry.clear()  
+
+    def test_saveToJson(self):
+        mock_file = mock_open()
+
+        with patch("builtins.open", mock_file):
+            AccountRegistry.saveToJson('../backup.json')  
+
+        mock_file.assert_called_once_with('../backup.json', 'w')
+        handle = mock_file()
+
+        expected_data = [
+            {
+                "imie": "Jan", "nazwisko": "Kowalski", "pesel": "12345678901", "saldo": 100, "historia": ["Wpłata 100 PLN"]
+            },
+            {
+                "imie": "Anna", "nazwisko": "Nowak", "pesel": "98765432101", "saldo": 50, "historia": ["Wpłata 50 PLN"]
+            }
+        ]
+
+        written_data = "".join([call[0][0] for call in handle.write.call_args_list])  
+
+        expected_json = json.dumps(expected_data, ensure_ascii=False, indent=4)
+
+        self.assertEqual(written_data, expected_json)
+
+    def test_loadFromJson(self):
+        mock_file = mock_open(read_data=json.dumps([
+            {
+                "imie": "Jan", "nazwisko": "Kowalski", "pesel": "12345678901", "saldo": 100, "historia": ["Wpłata 100 PLN"]
+            },
+            {
+                "imie": "Anna", "nazwisko": "Nowak", "pesel": "98765432101", "saldo": 50, "historia": ["Wpłata 50 PLN"]
+            }
+        ]))
+
+        with patch("builtins.open", mock_file):
+            AccountRegistry.loadFromJson('../backup.json')  
+
+        self.assertEqual(len(AccountRegistry.registry), 2)
+
+        self.assertEqual(AccountRegistry.registry[0].imie, "Jan")
+        self.assertEqual(AccountRegistry.registry[0].nazwisko, "Kowalski")
+        self.assertEqual(AccountRegistry.registry[0].pesel, "12345678901")
+        self.assertEqual(AccountRegistry.registry[0].saldo, 100)
+        self.assertEqual(AccountRegistry.registry[0].historia, ["Wpłata 100 PLN"])
+
+        self.assertEqual(AccountRegistry.registry[1].imie, "Anna")
+        self.assertEqual(AccountRegistry.registry[1].nazwisko, "Nowak")
+        self.assertEqual(AccountRegistry.registry[1].pesel, "98765432101")
+        self.assertEqual(AccountRegistry.registry[1].saldo, 50)
+        self.assertEqual(AccountRegistry.registry[1].historia, ["Wpłata 50 PLN"])
+
+        mock_file.assert_called_once_with('../backup.json', 'r')

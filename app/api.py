@@ -66,10 +66,15 @@ def update_account(pesel):
     account = AccountRegistry.search_by_pesel(pesel)
     if account is None:
         return jsonify({"message": "konta brak"}), 404
-    account.imie=data["imie"]
-    account.nazwisko = data["nazwisko"]
-    account.pesel = data["pesel"]
-    account.saldo = data["saldo"]
+    if "imie" in data:
+        account.imie = data["imie"]
+    if "nazwisko" in data:
+        account.nazwisko = data["nazwisko"]
+    if "pesel" in data:
+        account.pesel = data["pesel"]
+    if "saldo" in data:
+        account.saldo = data["saldo"]
+
 
     return jsonify({"message": "Account updated"}), 200
 

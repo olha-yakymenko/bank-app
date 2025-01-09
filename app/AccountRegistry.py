@@ -47,3 +47,4 @@ class AccountRegistry:
                 konto.saldo = konto_dict["saldo"]
                 konto.historia = konto_dict["historia"]
                 cls.registry.append(konto)
+

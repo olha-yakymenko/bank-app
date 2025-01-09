@@ -1,4 +1,4 @@
-from datetime import datetime
+#from datetime import datetime
 class SMTPClient:
     def send(subject, text, email_address) -> bool:
     #implementacja ktorej jeszcze nie mamy

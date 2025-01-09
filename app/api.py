@@ -105,3 +105,4 @@ def load_json_backup():
         return jsonify({"message": "Backup successfully loaded from JSON."}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    

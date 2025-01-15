@@ -33,7 +33,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Start flask app
       run: |
-        python3 -m flask --app=app/api.py run &
+        python3 -m flask --app=app.api run &
     - name: BDD tests
       run: |
         behave

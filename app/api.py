@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
-from .AccountRegistry import AccountRegistry
-from .PersonalAccount import PersonalAccount
+from app.AccountRegistry import AccountRegistry
+from app.PersonalAccount import PersonalAccount
 app = Flask(__name__)
 @app.route("/api/accounts", methods=['POST'])
 def create_account():

@@ -36,4 +36,4 @@ jobs:
         python3 -m flask --app=app.api run &
     - name: BDD tests
       run: |
-        behave
+        cd app && behave

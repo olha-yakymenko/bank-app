@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
-from .AccountRegistry import AccountRegistry
-from .PersonalAccount import PersonalAccount
+from app.AccountRegistry import AccountRegistry
+from app.PersonalAccount import PersonalAccount
 app = Flask(__name__)
 @app.route("/api/accounts", methods=['POST'])
 def create_account():
@@ -12,6 +12,7 @@ def create_account():
         print(f"Create account request: {data}")
         account = PersonalAccount(data["imie"], data["nazwisko"], data["pesel"])
         AccountRegistry.add_account(account)
+        print(f"Account created: {account}") 
         return jsonify({"message": "Account created"}), 201
     else:
         return jsonify({"message": "This pesel was used"}), 409

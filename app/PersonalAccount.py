@@ -1,10 +1,12 @@
 from .Konto import Konto
 from datetime import datetime
 from app.SMTPClient import SMTPClient
-
+from app.BlackList import BlackList 
 class PersonalAccount(Konto):
     express_fee = 1
     email_text="Twoja historia konta to: "
+    black_list_collection=BlackList()
+
     def __init__(self, imie, nazwisko, pesel, kod=None):
         super().__init__()
         self.imie = imie
@@ -43,8 +45,12 @@ class PersonalAccount(Konto):
 
 
     def zaciagnij_kredyt(self, kwota):
+        if self.black_list_collection.is_account_on_black_list(self.pesel):
+            return False
         if self.ostatnie_3_transakcje_wplaty() or self.suma_5_transakcji_wieksza_niz(kwota):
             self.saldo += kwota
+            return True
+        return False
     
     def ostatnie_3_transakcje_wplaty(self):
         if len(self.historia) < 3:

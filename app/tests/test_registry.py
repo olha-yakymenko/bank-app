@@ -117,69 +117,31 @@ class TestRegisterOfAccountsWithJSON(unittest.TestCase):
 
         self.assertEqual(written_data, expected_json)
 
-    # def test_loadFromJson(self):
-    #     mock_file = mock_open(read_data=json.dumps([
-    #         {
-    #             "imie": "Jan", "nazwisko": "Kowalski", "pesel": "12345678901", "saldo": 100, "historia": ["Wpłata 100 PLN"]
-    #         },
-    #         {
-    #             "imie": "Anna", "nazwisko": "Nowak", "pesel": "98765432101", "saldo": 50, "historia": ["Wpłata 50 PLN"]
-    #         }
-    #     ]))
+    def test_loadFromJson(self):
+        mock_file = mock_open(read_data=json.dumps([
+            {
+                "imie": "Jan", "nazwisko": "Kowalski", "pesel": "12345678901", "saldo": 100, "historia": ["Wpłata 100 PLN"]
+            },
+            {
+                "imie": "Anna", "nazwisko": "Nowak", "pesel": "98765432101", "saldo": 50, "historia": ["Wpłata 50 PLN"]
+            }
+        ]))
 
-    #     with patch("builtins.open", mock_file):
-    #         AccountRegistry.loadFromJson('../backup.json')  
+        with patch("builtins.open", mock_file):
+            AccountRegistry.loadFromJson('../backup.json')  
 
-    #     self.assertEqual(len(AccountRegistry.registry), 2)
+        self.assertEqual(len(AccountRegistry.registry), 2)
 
-    #     self.assertEqual(AccountRegistry.registry[0].imie, "Jan")
-    #     self.assertEqual(AccountRegistry.registry[0].nazwisko, "Kowalski")
-    #     self.assertEqual(AccountRegistry.registry[0].pesel, "12345678901")
-    #     self.assertEqual(AccountRegistry.registry[0].saldo, 100)
-    #     self.assertEqual(AccountRegistry.registry[0].historia, ["Wpłata 100 PLN"])
+        self.assertEqual(AccountRegistry.registry[0].imie, "Jan")
+        self.assertEqual(AccountRegistry.registry[0].nazwisko, "Kowalski")
+        self.assertEqual(AccountRegistry.registry[0].pesel, "12345678901")
+        self.assertEqual(AccountRegistry.registry[0].saldo, 100)
+        self.assertEqual(AccountRegistry.registry[0].historia, ["Wpłata 100 PLN"])
 
-    #     self.assertEqual(AccountRegistry.registry[1].imie, "Anna")
-    #     self.assertEqual(AccountRegistry.registry[1].nazwisko, "Nowak")
-    #     self.assertEqual(AccountRegistry.registry[1].pesel, "98765432101")
-    #     self.assertEqual(AccountRegistry.registry[1].saldo, 50)
-    #     self.assertEqual(AccountRegistry.registry[1].historia, ["Wpłata 50 PLN"])
+        self.assertEqual(AccountRegistry.registry[1].imie, "Anna")
+        self.assertEqual(AccountRegistry.registry[1].nazwisko, "Nowak")
+        self.assertEqual(AccountRegistry.registry[1].pesel, "98765432101")
+        self.assertEqual(AccountRegistry.registry[1].saldo, 50)
+        self.assertEqual(AccountRegistry.registry[1].historia, ["Wpłata 50 PLN"])
 
-    #     mock_file.assert_called_once_with('../backup.json', 'r')
-
-
-@parameterized.expand([
-        (
-            [
-                {"imie": "Jan", "nazwisko": "Kowalski", "pesel": "12345678901", "saldo": 100, "historia": ["Wpłata 100 PLN"]},
-                {"imie": "Anna", "nazwisko": "Nowak", "pesel": "98765432101", "saldo": 50, "historia": ["Wpłata 50 PLN"]}
-            ],
-            2
-        ),
-        # Możesz dodać więcej przypadków z różnymi danymi wejściowymi
-        (
-            [
-                {"imie": "Kamil", "nazwisko": "Nowak", "pesel": "11111111111", "saldo": 150, "historia": ["Wpłata 150 PLN"]},
-                {"imie": "Ewa", "nazwisko": "Kowalska", "pesel": "22222222222", "saldo": 200, "historia": ["Wpłata 200 PLN"]}
-            ],
-            2
-        )
-    ])
-def test_loadFromJson(self, data, expected_length):
-            # Przygotowanie mocka dla pliku
-            mock_file = mock_open(read_data=json.dumps(data))
-
-            with patch("builtins.open", mock_file):
-                # Załadowanie danych
-                AccountRegistry.loadFromJson('../backup.json')  
-
-            # Assercje dla oczekiwanego wyniku
-            self.assertEqual(len(AccountRegistry.registry), expected_length)
-
-            for idx, account in enumerate(AccountRegistry.registry):
-                self.assertEqual(account.imie, data[idx]["imie"])
-                self.assertEqual(account.nazwisko, data[idx]["nazwisko"])
-                self.assertEqual(account.pesel, data[idx]["pesel"])
-                self.assertEqual(account.saldo, data[idx]["saldo"])
-                self.assertEqual(account.historia, data[idx]["historia"])
-
-            mock_file.assert_called_once_with('../backup.json', 'r')
+        mock_file.assert_called_once_with('../backup.json', 'r')

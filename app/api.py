@@ -88,9 +88,6 @@ def delete_account(pesel):
     AccountRegistry.delete_by_pesel(pesel)
     return jsonify("Konto usuniete"), 201
 
-
-
-
 @app.route('/api/backup/dump/json', methods=['POST'])
 def dump_json_backup():
     try:
@@ -106,4 +103,3 @@ def load_json_backup():
         return jsonify({"message": "Backup successfully loaded from JSON."}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    

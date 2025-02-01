@@ -36,6 +36,7 @@ class AccountRegistry:
                 "saldo": konto.saldo,
                 "historia": konto.historia
             } for konto in cls.registry], file, ensure_ascii=False, indent=4)
+        return None
 
     @classmethod
     def loadFromJson(cls, file_path='backup.json'):
@@ -47,4 +48,4 @@ class AccountRegistry:
                 konto.saldo = konto_dict["saldo"]
                 konto.historia = konto_dict["historia"]
                 cls.registry.append(konto)
-
+        return None

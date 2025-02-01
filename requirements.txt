@@ -4,3 +4,4 @@ requests
 behave
 flask
 unittest_assertions
+pymongo

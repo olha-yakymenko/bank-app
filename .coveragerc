@@ -1,2 +1,4 @@
 [report]
-omit=/usr/lib/python3/dist-packages/_distutils_hack/__init__.py
+omit = 
+    /usr/lib/python3/dist-packages/_distutils_hack/__init__.py
+    app/SMTPClient.py

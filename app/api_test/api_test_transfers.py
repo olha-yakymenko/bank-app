@@ -44,3 +44,4 @@ class TestAccountTransfers(unittest.TestCase):
             response = requests.post(self.base_url + "/" + pesel + "/transfer", json={"amount": amount, "type": transfer_type})
 
         self.assertEqual(response.status_code, expected_result, f"Test {name} failed. Response: {response.text}")
+

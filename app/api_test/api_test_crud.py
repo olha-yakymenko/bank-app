@@ -117,4 +117,3 @@ class TestCRUD(unittest.TestCase):
         if pesel:
             requests.delete(f"{self.base_url}/{pesel}")
 
-

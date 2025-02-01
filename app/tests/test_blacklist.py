@@ -6,7 +6,7 @@ class TestBlackList(unittest.TestCase):
     @patch('pymongo.MongoClient')
     def setUp(self, mock_mongo_client):
         self.mock_client = MagicMock()
-        mock_mongo_client.eturn_value=self.mock_client
+        mock_mongo_client.return_value = self.mock_client
         self.black_list_connection=BlackList()
     
     def tearDown(self):
